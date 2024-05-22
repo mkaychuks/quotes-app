@@ -91,6 +91,12 @@ dependencies {
 
     // google font
     implementation("androidx.compose.ui:ui-text-google-fonts:1.6.7")
+
+    // constraint Layout
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+
+    // lottie animation
+    implementation("com.airbnb.android:lottie-compose:6.3.0")
 }
 
 kapt {
