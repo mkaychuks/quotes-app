@@ -134,9 +134,3 @@ fun HomeScreen(
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-private fun X() {
-    HomeScreen()
-}
