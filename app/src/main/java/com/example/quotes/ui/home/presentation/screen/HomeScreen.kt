@@ -17,13 +17,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FormatQuote
 import androidx.compose.material.icons.filled.QrCode2
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +34,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.example.quotes.R
 import com.example.quotes.ui.home.presentation.viewmodel.HomeScreenVM
 
 @Composable
@@ -42,6 +48,18 @@ fun HomeScreen(
 ) {
     val homeScreenVM = hiltViewModel<HomeScreenVM>()
     val uiState = homeScreenVM.homeScreenUiState.collectAsState().value
+
+    // setting up the lottie spec
+    val composition by rememberLottieComposition(
+        spec = LottieCompositionSpec.RawRes(
+            resId = R.raw.hand_loading
+        )
+    )
+    // the progress of the iteration
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        iterations = LottieConstants.IterateForever
+    )
 
     Column(
         modifier = modifier
@@ -54,7 +72,13 @@ fun HomeScreen(
 
         // check for the loading screen time for the state
         if (uiState.isLoading) {
-            CircularProgressIndicator()
+            Box(
+                modifier = Modifier
+                    .width(200.dp)
+                    .height(200.dp)
+            ) {
+                LottieAnimation(composition = composition, progress = { progress })
+            }
         } else {
             ConstraintLayout {
                 val (quoteBox, balloon) = createRefs()
@@ -125,7 +149,7 @@ fun HomeScreen(
                         .clip(CircleShape)
                         .background(Color(0xff52FFA8))
                         .constrainAs(balloon) {
-                            top.linkTo(quoteBox.bottom, margin = -30.dp)
+                            top.linkTo(quoteBox.bottom, margin = -25.dp)
                             start.linkTo(quoteBox.start)
                             end.linkTo(quoteBox.end)
                         },

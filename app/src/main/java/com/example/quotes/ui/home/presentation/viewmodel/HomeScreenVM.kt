@@ -1,6 +1,5 @@
 package com.example.quotes.ui.home.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quotes.ui.home.Result
@@ -40,7 +39,6 @@ class HomeScreenVM @Inject constructor(
                                 adviceData = result.data!!
                             )
                         }
-                        Log.d("Advice", "getDefaultAdvice: ${result.data?.slip}")
                     }
                 }
             }
