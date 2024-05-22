@@ -5,10 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quotes.ui.home.Result
 import com.example.quotes.ui.home.domain.AdviceRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeScreenVM(
+@HiltViewModel
+class HomeScreenVM @Inject constructor(
     private val adviceRepository: AdviceRepository
 ) : ViewModel(){
 

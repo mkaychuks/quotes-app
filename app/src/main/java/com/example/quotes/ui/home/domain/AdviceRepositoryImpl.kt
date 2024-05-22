@@ -5,8 +5,9 @@ import com.example.quotes.ui.home.Result
 import com.example.quotes.ui.home.data.model.Advice
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
-class AdviceRepositoryImpl(
+class AdviceRepositoryImpl @Inject constructor(
     private val api: AdviceAPI
 ) : AdviceRepository {
     override suspend fun getRandomAdvice(): Flow<Result<Advice>> {
