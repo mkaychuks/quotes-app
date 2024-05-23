@@ -1,7 +1,7 @@
 package com.example.quotes.ui.home.domain
 
-import com.example.quotes.ui.home.AdviceAPI
-import com.example.quotes.ui.home.Result
+import com.example.quotes.ui.AdviceAPI
+import com.example.quotes.ui.Result
 import com.example.quotes.ui.home.data.model.Advice
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
