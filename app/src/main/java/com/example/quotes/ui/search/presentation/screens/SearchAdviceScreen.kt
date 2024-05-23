@@ -1,5 +1,6 @@
 package com.example.quotes.ui.search.presentation.screens
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,23 +36,54 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.example.quotes.R
+import com.example.quotes.ui.search.presentation.viewmodel.AdviceSearchEvent
+import com.example.quotes.ui.search.presentation.viewmodel.AdviceSearchVM
+import com.example.quotes.ui.theme.QuotesTheme
 
 @Composable
 fun SearchAdviceScreen(
     modifier: Modifier = Modifier,
 ) {
     var value by remember { mutableStateOf("") }
+    val searchAdviceVM = hiltViewModel<AdviceSearchVM>()
+    val uiState = searchAdviceVM.uiState.collectAsState().value
+    val keyboardController = LocalSoftwareKeyboardController.current
+    // setting up the lottie spec
+    val composition by rememberLottieComposition(
+        spec = LottieCompositionSpec.RawRes(
+            resId = R.raw.hand_loading
+        )
+    )
+    val composition2 by rememberLottieComposition(
+        spec = LottieCompositionSpec.RawRes(
+            resId = R.raw.empty_state
+        )
+    )
+    // the progress of the iteration
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        iterations = LottieConstants.IterateForever
+    )
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.onPrimary)
-            .padding(16.dp)
+            .padding(16.dp),
     ) {
         // the textField
         SearchFieldWidget(
@@ -58,21 +91,81 @@ fun SearchAdviceScreen(
             onValueChange = {
                 value = it
             },
-            onSearch = {},
-            onSearchIconClicked = {}
+            onSearch = {
+                searchAdviceVM.onEvent(AdviceSearchEvent.SearchButtonClicked(value))
+                keyboardController?.hide()
+            },
+            onSearchIconClicked = {
+                searchAdviceVM.onEvent(AdviceSearchEvent.SearchButtonClicked(value))
+                keyboardController?.hide()
+            }
         )
         Spacer(Modifier.height(12.dp))
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(count = 2),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            items(10) {
-                SearchResultAdviceBubble(
-                    adviceDesc = "Everybody makes mistakes.",
-                    adviceNumber = 123,
-                    adviceDate = "2016-05-10"
-                )
+        if (uiState.isLoading) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(200.dp)
+                        .height(200.dp)
+                ) {
+                    LottieAnimation(composition = composition, progress = { progress })
+                }
+            }
+        } else if (uiState.idle) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(200.dp)
+                        .height(200.dp)
+                ) {
+                    LottieAnimation(composition = composition, progress = { progress })
+                }
+            }
+        } else {
+            if (uiState.dataReceived.slips == null) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(200.dp)
+                            .height(200.dp)
+                    ) {
+                        LottieAnimation(composition = composition2, progress = { progress })
+                    }
+                    Text(
+                        text = "Sorry, we couldn't find an advice based on your search query",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(count = 2),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    items(uiState.dataReceived.slips.size) {
+                        SearchResultAdviceBubble(
+                            adviceDesc = uiState.dataReceived.slips[it].advice,
+                            adviceNumber = uiState.dataReceived.slips[it].id,
+                            adviceDate = uiState.dataReceived.slips[it].date
+                        )
+                    }
+                }
             }
         }
     }
@@ -126,7 +219,7 @@ fun SearchResultAdviceBubble(
     modifier: Modifier = Modifier,
     adviceNumber: Int = 0,
     adviceDesc: String = "",
-    adviceDate: String = ""
+    adviceDate: String = "",
 ) {
     Box(
         modifier = modifier
@@ -149,7 +242,7 @@ fun SearchResultAdviceBubble(
                     fontSize = 14.sp
                 ),
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = adviceDesc, textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleMedium.copy(
@@ -178,11 +271,11 @@ fun SearchResultAdviceBubble(
 }
 
 
-//@Preview(name = "Light Mode")
-//@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES, name = "Dark Mode")
-//@Composable
-//private fun X() {
-//    QuotesTheme {
-//        SearchAdviceScreen()
-//    }
-//}
+@Preview(name = "Light Mode")
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES, name = "Dark Mode")
+@Composable
+private fun X() {
+    QuotesTheme {
+        SearchAdviceScreen()
+    }
+}
