@@ -1,4 +1,4 @@
-package com.example.quotes.ui.home
+package com.example.quotes.ui
 
 sealed class Result<T>(
     val data: T?  = null,

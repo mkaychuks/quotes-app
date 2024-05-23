@@ -2,7 +2,7 @@ package com.example.quotes.ui.home.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.quotes.ui.home.Result
+import com.example.quotes.ui.Result
 import com.example.quotes.ui.home.domain.AdviceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

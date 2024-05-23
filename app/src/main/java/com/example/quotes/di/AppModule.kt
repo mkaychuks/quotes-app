@@ -1,8 +1,10 @@
 package com.example.quotes.di
 
-import com.example.quotes.ui.home.AdviceAPI
+import com.example.quotes.ui.AdviceAPI
 import com.example.quotes.ui.home.domain.AdviceRepository
 import com.example.quotes.ui.home.domain.AdviceRepositoryImpl
+import com.example.quotes.ui.search.domain.AdviceSearchRepository
+import com.example.quotes.ui.search.domain.AdviceSearchRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,5 +34,12 @@ object AppModule {
     @Singleton
     fun provideRepository(api: AdviceAPI): AdviceRepository{
         return AdviceRepositoryImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun
+            provideSearchRepository(api: AdviceAPI): AdviceSearchRepository{
+        return AdviceSearchRepositoryImpl(api)
     }
 }
