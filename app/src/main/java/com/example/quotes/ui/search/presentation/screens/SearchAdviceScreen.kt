@@ -73,6 +73,11 @@ fun SearchAdviceScreen(
             resId = R.raw.empty_state
         )
     )
+    val composition3 by rememberLottieComposition(
+        spec = LottieCompositionSpec.RawRes(
+            resId = R.raw.idle_search
+        )
+    )
     // the progress of the iteration
     val progress by animateLottieCompositionAsState(
         composition = composition,
@@ -93,10 +98,12 @@ fun SearchAdviceScreen(
             },
             onSearch = {
                 searchAdviceVM.onEvent(AdviceSearchEvent.SearchButtonClicked(value))
+                value = ""
                 keyboardController?.hide()
             },
             onSearchIconClicked = {
                 searchAdviceVM.onEvent(AdviceSearchEvent.SearchButtonClicked(value))
+                value = ""
                 keyboardController?.hide()
             }
         )
@@ -123,11 +130,19 @@ fun SearchAdviceScreen(
             ) {
                 Box(
                     modifier = Modifier
-                        .width(200.dp)
-                        .height(200.dp)
+                        .width(150.dp)
+                        .height(150.dp)
                 ) {
-                    LottieAnimation(composition = composition, progress = { progress })
+                    LottieAnimation(composition = composition3, progress = { progress })
                 }
+                Text(
+                    text = "You can search for an advice by typing in the word in the search bar",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    textAlign = TextAlign.Center
+                )
             }
         } else {
             if (uiState.dataReceived.slips == null) {
