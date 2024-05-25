@@ -3,9 +3,6 @@ package com.example.quotes
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.quotes.ui.search.presentation.screens.SearchAdviceScreen
-import com.example.quotes.ui.search.presentation.viewmodel.AdviceSearchVM
 import com.example.quotes.ui.theme.QuotesTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -16,10 +13,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             QuotesTheme {
                 // A surface container using the 'background' color from the theme
-//                HomeScreen()
-                val vm = hiltViewModel<AdviceSearchVM>()
-                SearchAdviceScreen()
+                AppMain()
             }
         }
     }
 }
+
+
+

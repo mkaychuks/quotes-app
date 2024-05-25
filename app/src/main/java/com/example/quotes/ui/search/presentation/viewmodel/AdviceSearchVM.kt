@@ -21,11 +21,6 @@ class AdviceSearchVM @Inject constructor(
     private var _uiState = MutableStateFlow(AdviceSearchState())
     val uiState = _uiState.asStateFlow()
 
-    init {
-        searchForAdvice("spiders")
-    }
-
-
     fun onEvent(event: AdviceSearchEvent){
         when(event){
             is AdviceSearchEvent.SearchButtonClicked -> {
