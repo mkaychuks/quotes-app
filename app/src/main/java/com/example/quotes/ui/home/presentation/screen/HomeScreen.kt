@@ -55,6 +55,11 @@ fun HomeScreen(
             resId = R.raw.hand_loading
         )
     )
+    val composition1 by rememberLottieComposition(
+        spec = LottieCompositionSpec.RawRes(
+            resId = R.raw.error
+        )
+    )
     // the progress of the iteration
     val progress by animateLottieCompositionAsState(
         composition = composition,
@@ -78,6 +83,14 @@ fun HomeScreen(
                     .height(200.dp)
             ) {
                 LottieAnimation(composition = composition, progress = { progress })
+            }
+        } else if (uiState.errorState) {
+            Box(
+                modifier = Modifier
+                    .width(200.dp)
+                    .height(200.dp)
+            ) {
+                LottieAnimation(composition = composition1, progress = { progress })
             }
         } else {
             ConstraintLayout {

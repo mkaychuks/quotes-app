@@ -30,7 +30,7 @@ class HomeScreenVM @Inject constructor(
             adviceRepository.getRandomAdvice().collectLatest { result ->
                 when (result) {
                     is Result.Error -> {
-                        _homeScreenUiState.update { it.copy(isLoading = false) }
+                        _homeScreenUiState.update { it.copy(isLoading = false, errorState = true) }
                     }
                     is Result.Success -> {
                         _homeScreenUiState.update {

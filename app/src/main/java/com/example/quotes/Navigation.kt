@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.BookmarkAdd
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
@@ -26,6 +28,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.quotes.ui.favourites.presentation.FavouritesScreen
 import com.example.quotes.ui.home.presentation.screen.HomeScreen
 import com.example.quotes.ui.search.presentation.screens.SearchAdviceScreen
 
@@ -47,12 +50,19 @@ sealed class BottomBarScreen(
         selectedIcon = Icons.Filled.Search,
         unselectedIcon = Icons.Outlined.Search
     )
+
+    data object Favourites: BottomBarScreen(
+        route = "favourites",
+        selectedIcon = Icons.Filled.BookmarkAdd,
+        unselectedIcon = Icons.Outlined.BookmarkAdd
+    )
 }
 
 // the list of screens
 val items = listOf(
     BottomBarScreen.Home,
-    BottomBarScreen.Search
+    BottomBarScreen.Search,
+    BottomBarScreen.Favourites
 )
 
 // creating the bottom Navigation with the controller
@@ -71,6 +81,9 @@ fun BottomNavigationScreens(
         }
         composable(route = BottomBarScreen.Search.route) {
             SearchAdviceScreen()
+        }
+        composable(route = BottomBarScreen.Favourites.route) {
+            FavouritesScreen()
         }
     }
 }
