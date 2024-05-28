@@ -1,6 +1,7 @@
 package com.example.quotes.ui.search.presentation.screens
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,13 +21,14 @@ import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BubbleChart
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -50,9 +53,13 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.quotes.R
+import com.example.quotes.ui.favourites.data.Favourites
+import com.example.quotes.ui.favourites.presentation.viewmodel.FavouritesEvent
+import com.example.quotes.ui.favourites.presentation.viewmodel.FavouritesVM
 import com.example.quotes.ui.search.presentation.viewmodel.AdviceSearchEvent
 import com.example.quotes.ui.search.presentation.viewmodel.AdviceSearchVM
 import com.example.quotes.ui.theme.QuotesTheme
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun SearchAdviceScreen(
@@ -62,6 +69,9 @@ fun SearchAdviceScreen(
     val searchAdviceVM = hiltViewModel<AdviceSearchVM>()
     val uiState = searchAdviceVM.uiState.collectAsState().value
     val keyboardController = LocalSoftwareKeyboardController.current
+    val favouriteVM = hiltViewModel<FavouritesVM>()
+    val context = LocalContext.current
+
     // setting up the lottie spec
     val composition by rememberLottieComposition(
         spec = LottieCompositionSpec.RawRes(
@@ -83,6 +93,14 @@ fun SearchAdviceScreen(
         composition = composition,
         iterations = LottieConstants.IterateForever
     )
+
+    LaunchedEffect(key1 = favouriteVM.channel) {
+        favouriteVM.channel.collectLatest { show ->
+            if(show){
+                Toast.makeText(context, "Advice added to your Favourites", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -177,7 +195,17 @@ fun SearchAdviceScreen(
                         SearchResultAdviceBubble(
                             adviceDesc = uiState.dataReceived.slips[it].advice,
                             adviceNumber = uiState.dataReceived.slips[it].id,
-                            adviceDate = uiState.dataReceived.slips[it].date
+                            adviceDate = uiState.dataReceived.slips[it].date,
+                            onClick = {
+                                favouriteVM.onEvent(
+                                    FavouritesEvent.SaveFavourite(
+                                        Favourites(
+                                            title = uiState.dataReceived.slips[it].advice,
+                                            adviceNumber = uiState.dataReceived.slips[it].id
+                                        )
+                                    )
+                                )
+                            }
                         )
                     }
                 }
@@ -235,6 +263,7 @@ fun SearchResultAdviceBubble(
     adviceNumber: Int = 0,
     adviceDesc: String = "",
     adviceDate: String = "",
+    onClick: () -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -275,13 +304,14 @@ fun SearchResultAdviceBubble(
             )
         }
         Icon(
-            Icons.Default.BubbleChart,
+            Icons.Default.Bookmark,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.align(
-                Alignment.BottomEnd
-            ),
+                Alignment.BottomEnd)
+                .clickable { onClick() },
         )
+
     }
 }
 
