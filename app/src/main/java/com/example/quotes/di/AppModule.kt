@@ -1,6 +1,11 @@
 package com.example.quotes.di
 
+import android.app.Application
+import androidx.room.Room
 import com.example.quotes.ui.AdviceAPI
+import com.example.quotes.ui.favourites.data.FavouritesDatabase
+import com.example.quotes.ui.favourites.data.FavouritesRepository
+import com.example.quotes.ui.favourites.data.FavouritesRepositoryImpl
 import com.example.quotes.ui.home.domain.AdviceRepository
 import com.example.quotes.ui.home.domain.AdviceRepositoryImpl
 import com.example.quotes.ui.search.domain.AdviceSearchRepository
@@ -38,8 +43,25 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun
-            provideSearchRepository(api: AdviceAPI): AdviceSearchRepository{
+    fun provideSearchRepository(api: AdviceAPI): AdviceSearchRepository{
         return AdviceSearchRepositoryImpl(api)
+    }
+
+    // providing the room database
+    @Provides
+    @Singleton
+    fun provideFavouriteDatabase(app: Application): FavouritesDatabase {
+        return Room.databaseBuilder(
+            app,
+            FavouritesDatabase::class.java,
+            "favourites"
+        ).build()
+    }
+
+    // providing the favourites repository
+    @Provides
+    @Singleton
+    fun provideFavouriteRepository(db: FavouritesDatabase): FavouritesRepository {
+       return FavouritesRepositoryImpl(db.dao)
     }
 }
