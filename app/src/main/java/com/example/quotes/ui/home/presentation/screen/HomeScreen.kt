@@ -96,7 +96,7 @@ fun HomeScreen(
                     type = "text/plain"
                     putExtra(
                         Intent.EXTRA_TEXT,
-                        "*ADVICE #${uiState.adviceData.slip?.id}*\n\n\n ```${uiState.adviceData.slip?.advice}``` \n\n\n_with love from the Advice Team_"
+                        "*ADVICE #${uiState.adviceData.slip?.id}*\n\n\n ```${uiState.adviceData.slip?.advice}``` \n\n\n\t\t\t_from the Advice Team_"
                     )
                 }
                 if (intent.resolveActivity(context.packageManager) != null) {
