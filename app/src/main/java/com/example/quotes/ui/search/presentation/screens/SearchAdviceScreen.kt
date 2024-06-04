@@ -154,7 +154,7 @@ fun SearchAdviceScreen(
                     LottieAnimation(composition = composition3, progress = { progress })
                 }
                 Text(
-                    text = "You can search for an advice by typing in the word in the search bar",
+                    text = "You can search for an advice by typing in the keyword in the search bar",
                     style = MaterialTheme.typography.titleMedium.copy(
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Bold
@@ -240,7 +240,7 @@ fun SearchFieldWidget(
         shape = RoundedCornerShape(12.dp),
         placeholder = {
             Text(
-                text = "Search for advices e.g. 'car', 'house' ",
+                text = "Search for advices using keywords e.g. 'car', 'house' ",
                 style = MaterialTheme.typography.labelLarge.copy(color = MaterialTheme.colorScheme.onSurface)
             )
         },
